@@ -1,30 +1,74 @@
+let clientId = 1
+
+const DOLLAR_SAVINGS_ACCOUNT = "dollar"
+const PESOS_SAVINGS_ACCOUNT = "pesos"
+
 class Client {
-    constructor(clientId, dni, password, name, surname, balance, overdraftFacility, creditCardNumber, creditCardDueDate, hasDolarSavingsAccount, dolarSavingsAccount){
+    constructor(dni, password, name, surname, overdraftLimit, hasDolarSavingsAccount){
         this.id = clientId
+        clientId++
+
         this.dni = dni
         this.password = password 
         this.name = name
         this.surname = surname
-        this.balance = balance
-        this.overdraftFacility = overdraftFacility
-        this.creditCardNumber = creditCardNumber
-        this.creditCardDueDate = creditCardDueDate
-        this.hasDolarBalance = hasDolarSavingsAccount
-        this.dolarBalance = dolarSavingsAccount
+
+        this.balance = 0
+        this.overdraftFacility = overdraftLimit
+        this.creditCardNumber = 777777777777 + this.id
+        
+        let currentDate = new Date() 
+        this.creditCardDueDate = new Date(currentDate.getFullYear() + 3, currentDate.getMonth(), currentDate.getDay())
+        
+        if(hasDolarSavingsAccount == true){
+            this.dolarBalance = 0
+        }
+        else {
+            this.dolarBalance = -1
+        }
+        
     }
+
+    takeMoney(ammount, type){
+        if(type !== PESOS_SAVINGS_ACCOUNT && type !== DOLLAR_SAVINGS_ACCOUNT)
+            return false;
+
+        if(type === DOLLAR_SAVINGS_ACCOUNT && this.dolarBalance < 0)
+            return false;
+
+        if(type === PESOS_SAVINGS_ACCOUNT) {
+            if((this.balance + this.overdraftLimit) >= ammount) {
+                this.balance -= ammount;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            if(this.dolarBalance >= ammount) {
+                this.dolarBalance -= ammount;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+
 }
 
 const clients = [
-    new Client(1, '12345678A', 'password1', 'John', 'Doe', 1000, true, '1111 2222 3333 4444', '01/25', true, 500),
-    new Client(2, '87654321B', 'password2', 'Jane', 'Smith', 1500, false, '5555 6666 7777 8888', '02/26', false, 0),
-    new Client(3, '11111111C', 'password3', 'Alice', 'Johnson', 2000, true, '9999 8888 7777 6666', '03/27', true, 700),
-    new Client(4, '22222222D', 'password4', 'Bob', 'Williams', 2500, false, '4444 3333 2222 1111', '04/28', false, 0),
-    new Client(5, '33333333E', 'password5', 'Michael', 'Brown', 3000, true, '3333 4444 5555 6666', '05/29', true, 800),
-    new Client(6, '44444444F', 'password6', 'Emily', 'Davis', 3500, false, '7777 8888 9999 0000', '06/30', false, 0),
-    new Client(7, '55555555G', 'password7', 'William', 'Miller', 4000, true, '8888 7777 6666 5555', '07/31', true, 900),
-    new Client(8, '66666666H', 'password8', 'Olivia', 'Wilson', 4500, false, '2222 3333 4444 5555', '08/32', false, 0),
-    new Client(9, '77777777I', 'password9', 'James', 'Taylor', 5000, true, '5555 4444 3333 2222', '09/33', true, 1000),
-    new Client(10, '88888888J', 'password10', 'Emma', 'Moore', 5500, false, '9999 8888 7777 6666', '10/34', false, 0)
+    new Client('12345678A', 'password1', 'John', 'Doe', 1000, true),
+    new Client('87654321B', 'password2', 'Jane', 'Smith', 1500, false),
+    new Client('11111111C', 'password3', 'Alice', 'Johnson', 2000, true),
+    new Client('22222222D', 'password4', 'Bob', 'Williams', 2500, false),
+    new Client('33333333E', 'password5', 'Michael', 'Brown', 3000, true),
+    new Client('44444444F', 'password6', 'Emily', 'Davis', 3500, false),
+    new Client('55555555G', 'password7', 'William', 'Miller', 4000, true),
+    new Client('66666666H', 'password8', 'Olivia', 'Wilson', 4500, false),
+    new Client('77777777I', 'password9', 'James', 'Taylor', 5000, true),
+    new Client('88888888J', 'password10', 'Emma', 'Moore', 5500, false)
 ];
 
 console.log("Clientes:", clients);
